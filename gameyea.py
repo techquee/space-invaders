@@ -1,12 +1,17 @@
 import turtle
 import os
+import sys
 import math
 import random
-
+import ctypes  # An included library with Python install.   
 
 wn = turtle.Screen()
 wn.bgcolor("black")
-wn.title("spaceinvaders")
+wn.title("Space Invaders")
+wn.bgpic("background.gif")
+
+turtle.register_shape("invader.gif")
+turtle.register_shape("player.gif")
 
 border_pen = turtle.Turtle()
 border_pen.speed(0)
@@ -34,7 +39,7 @@ score_pen.hideturtle()
 
 player = turtle.Turtle()
 player.color("blue")
-player.shape("triangle")
+player.shape("player.gif")
 player.penup()
 player.setposition(0,-250)
 player.setheading(90)
@@ -42,8 +47,7 @@ player.setheading(90)
 playerspeed = 15
 
 enemy = turtle.Turtle()
-enemy.color("red")
-enemy.shape("circle")
+
 enemy.penup()
 enemy.speed(0)
 enemy.setposition(-200,250)
@@ -60,7 +64,7 @@ for i in range(no_of_enemies):
 for enemy in enemies:
      
      enemy.color("red")
-     enemy.shape("circle")
+     enemy.shape("invader.gif")
      enemy.penup()
      enemy.speed(0)
      x = random.randint(-200,200)
@@ -99,6 +103,7 @@ def move_right():
 def fire_bullet():
     global bulletstate
     if bulletstate == "ready":
+        os.system("play explosion.wav&");
         bulletstate = "fire"
 
     x = player.xcor()
@@ -113,8 +118,6 @@ def isCollision(t1, t2):
     else:
         return False
                 
-    
-    
 
 
 turtle.listen()
@@ -143,6 +146,7 @@ while True:
                 e.sety(y)
             enemyspeed *= -1
         if isCollision(bullet,enemy):
+            os.system("play laser.wav&")
             bullet.hideturtle()
             bulletstate = "ready"
             bullet.setposition(0,-400)
@@ -159,10 +163,10 @@ while True:
         if isCollision(player,enemy):
             player.hideturtle()
             enemy.hideturtle()
-            print "Game over"
+            ctypes.windll.user32.MessageBoxW(0, "GAME OVER", "Space Invaders", 1)
+            print ("Game over")
             sys.exit()
 
-#if bulletstate == "fire":
     y = bullet.ycor()
     y += bulletspeed
     bullet.sety(y)
